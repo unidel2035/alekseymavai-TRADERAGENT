@@ -1,0 +1,165 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TRADERAGENT
+
+//@version=5
+indicator("Fibonacci Tower", overlay=true, max_lines_count=500)
+
+// ============================================================================
+// INPUTS
+// ============================================================================
+
+// RSI Settings
+rsiLength = input.int(14, "RSI Length", minval=1, group="RSI Settings")
+rsiOversold = input.int(30, "RSI Oversold Level", minval=1, maxval=50, group="RSI Settings")
+
+// MACD Settings
+macdFastLength = input.int(12, "MACD Fast Length", minval=1, group="MACD Settings")
+macdSlowLength = input.int(26, "MACD Slow Length", minval=1, group="MACD Settings")
+macdSignalLength = input.int(9, "MACD Signal Length", minval=1, group="MACD Settings")
+
+// Fibonacci Settings
+fibLookback = input.int(100, "Fibonacci Lookback Period", minval=10, group="Fibonacci Settings")
+showFibLevels = input.bool(true, "Show Fibonacci Levels", group="Fibonacci Settings")
+
+// Signal Display Settings
+showBuySignals = input.bool(true, "Show Buy Signals", group="Display Settings")
+showLabels = input.bool(true, "Show Level Labels", group="Display Settings")
+
+// ============================================================================
+// INDICATOR CALCULATIONS
+// ============================================================================
+
+// RSI Calculation
+rsi = ta.rsi(close, rsiLength)
+rsiOversoldCondition = rsi < rsiOversold
+
+// MACD Calculation
+[macdLine, signalLine, histLine] = ta.macd(close, macdFastLength, macdSlowLength, macdSignalLength)
+macdBullishCross = ta.crossover(macdLine, signalLine)
+macdReversal = macdBullishCross and histLine[1] < 0
+
+// Bearish Candles Detection (3 consecutive bearish candles)
+bearishCandle = close < open
+threeBearishCandles = bearishCandle and bearishCandle[1] and bearishCandle[2]
+
+// ============================================================================
+// BUY SIGNAL LOGIC
+// ============================================================================
+
+// Combine all conditions for buy signal
+buySignal = threeBearishCandles and rsiOversoldCondition and macdReversal
+
+// ============================================================================
+// FIBONACCI LEVELS CALCULATION
+// ============================================================================
+
+// Find swing high and low within lookback period
+var float swingHigh = na
+var float swingLow = na
+var int swingHighBar = na
+var int swingLowBar = na
+
+// Update swing points when buy signal occurs
+if buySignal
+    // Find highest high and lowest low in lookback period
+    swingHigh := ta.highest(high, fibLookback)
+    swingLow := ta.lowest(low, fibLookback)
+    swingHighBar := bar_index
+    swingLowBar := bar_index
+
+// Calculate Fibonacci levels
+fibRange = swingHigh - swingLow
+fib0 = swingLow
+fib236 = swingLow + fibRange * 0.236
+fib382 = swingLow + fibRange * 0.382
+fib50 = swingLow + fibRange * 0.500
+fib618 = swingLow + fibRange * 0.618
+fib786 = swingLow + fibRange * 0.786
+fib100 = swingHigh
+
+// ============================================================================
+// VISUALIZATION
+// ============================================================================
+
+// Plot Buy Signals
+plotshape(
+     showBuySignals and buySignal,
+     title="Buy Signal",
+     location=location.belowbar,
+     color=color.new(color.green, 0),
+     style=shape.triangleup,
+     size=size.normal,
+     text="BUY"
+ )
+
+// Plot Fibonacci Levels
+var line fibLine0 = na
+var line fibLine236 = na
+var line fibLine382 = na
+var line fibLine50 = na
+var line fibLine618 = na
+var line fibLine786 = na
+var line fibLine100 = na
+
+var label fibLabel0 = na
+var label fibLabel236 = na
+var label fibLabel382 = na
+var label fibLabel50 = na
+var label fibLabel618 = na
+var label fibLabel786 = na
+var label fibLabel100 = na
+
+if buySignal and showFibLevels
+    // Delete old lines and labels
+    line.delete(fibLine0)
+    line.delete(fibLine236)
+    line.delete(fibLine382)
+    line.delete(fibLine50)
+    line.delete(fibLine618)
+    line.delete(fibLine786)
+    line.delete(fibLine100)
+
+    label.delete(fibLabel0)
+    label.delete(fibLabel236)
+    label.delete(fibLabel382)
+    label.delete(fibLabel50)
+    label.delete(fibLabel618)
+    label.delete(fibLabel786)
+    label.delete(fibLabel100)
+
+    // Draw new Fibonacci lines
+    fibLine0 := line.new(bar_index, fib0, bar_index + 50, fib0, color=color.new(color.red, 0), width=1, style=line.style_solid)
+    fibLine236 := line.new(bar_index, fib236, bar_index + 50, fib236, color=color.new(color.orange, 0), width=1, style=line.style_dashed)
+    fibLine382 := line.new(bar_index, fib382, bar_index + 50, fib382, color=color.new(color.yellow, 0), width=1, style=line.style_dashed)
+    fibLine50 := line.new(bar_index, fib50, bar_index + 50, fib50, color=color.new(color.blue, 0), width=2, style=line.style_solid)
+    fibLine618 := line.new(bar_index, fib618, bar_index + 50, fib618, color=color.new(color.green, 0), width=2, style=line.style_dashed)
+    fibLine786 := line.new(bar_index, fib786, bar_index + 50, fib786, color=color.new(color.purple, 0), width=1, style=line.style_dashed)
+    fibLine100 := line.new(bar_index, fib100, bar_index + 50, fib100, color=color.new(color.red, 0), width=1, style=line.style_solid)
+
+    // Add labels if enabled
+    if showLabels
+        fibLabel0 := label.new(bar_index + 50, fib0, "0.0% (Tower Base)", style=label.style_label_left, color=color.new(color.red, 80), textcolor=color.red)
+        fibLabel236 := label.new(bar_index + 50, fib236, "23.6%", style=label.style_label_left, color=color.new(color.orange, 80), textcolor=color.orange)
+        fibLabel382 := label.new(bar_index + 50, fib382, "38.2%", style=label.style_label_left, color=color.new(color.yellow, 80), textcolor=color.yellow)
+        fibLabel50 := label.new(bar_index + 50, fib50, "50.0%", style=label.style_label_left, color=color.new(color.blue, 80), textcolor=color.blue)
+        fibLabel618 := label.new(bar_index + 50, fib618, "61.8% (Golden Ratio)", style=label.style_label_left, color=color.new(color.green, 80), textcolor=color.green)
+        fibLabel786 := label.new(bar_index + 50, fib786, "78.6%", style=label.style_label_left, color=color.new(color.purple, 80), textcolor=color.purple)
+        fibLabel100 := label.new(bar_index + 50, fib100, "100.0% (Tower Top)", style=label.style_label_left, color=color.new(color.red, 80), textcolor=color.red)
+
+// ============================================================================
+// ALERTS
+// ============================================================================
+
+// Alert condition for buy signals
+alertcondition(buySignal, title="Fibonacci Tower Buy Signal", message="Fibonacci Tower: Buy signal detected! 3 bearish candles + RSI oversold + MACD reversal")
+
+// Background highlighting for buy signals
+bgcolor(buySignal ? color.new(color.green, 90) : na, title="Buy Signal Background")
+
+// ============================================================================
+// PLOTS FOR DEBUGGING (Optional - can be commented out)
+// ============================================================================
+
+// Plot RSI in separate pane (optional)
+// plot(rsi, "RSI", color=color.blue, display=display.none)
+// hline(rsiOversold, "RSI Oversold", color=color.red, linestyle=hline.style_dotted, display=display.none)
