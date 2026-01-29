@@ -509,20 +509,20 @@ if showHexagram and not na(hexagramPointAX) and not na(hexagramPointBX) and not 
 // ОТОБРАЖЕНИЕ СИГНАЛОВ
 // ============================================================================
 
-if showSignals
-    plotshape(longSignal, title="LONG Signal",
-              location=location.belowbar,
-              color=color.new(color.green, 0),
-              style=shape.triangleup,
-              size=size.normal,
-              text="LONG")
+// Отображение сигналов (plotshape не может быть в условном блоке в v6)
+plotshape(showSignals and longSignal, title="LONG Signal",
+          location=location.belowbar,
+          color=color.new(color.green, 0),
+          style=shape.triangleup,
+          size=size.normal,
+          text="LONG")
 
-    plotshape(shortSignal, title="SHORT Signal",
-              location=location.abovebar,
-              color=color.new(color.red, 0),
-              style=shape.triangledown,
-              size=size.normal,
-              text="SHORT")
+plotshape(showSignals and shortSignal, title="SHORT Signal",
+          location=location.abovebar,
+          color=color.new(color.red, 0),
+          style=shape.triangledown,
+          size=size.normal,
+          text="SHORT")
 
 // Подсветка фона при сигнале
 bgcolor(longSignal ? color.new(color.green, 90) : na, title="LONG Background")
