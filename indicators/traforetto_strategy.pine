@@ -373,14 +373,14 @@ if modelPointCount >= 4
                 label.delete(sacredPointLabel)
 
             // Крестик в точке СТ
-            sacredPointLineH := line.new(sacredPointX - 2, sacredPointY, sacredPointX + 2, sacredPointY,
+            sacredPointLineH := line.new(int(sacredPointX) - 2, sacredPointY, int(sacredPointX) + 2, sacredPointY,
                                          color=sacredPointColor, width=3)
-            sacredPointLineV := line.new(sacredPointX, sacredPointY - (p2_price - p1_price) * 0.02,
-                                         sacredPointX, sacredPointY + (p2_price - p1_price) * 0.02,
+            sacredPointLineV := line.new(int(sacredPointX), sacredPointY - (p2_price - p1_price) * 0.02,
+                                         int(sacredPointX), sacredPointY + (p2_price - p1_price) * 0.02,
                                          color=sacredPointColor, width=3)
 
             strengthText = isStrongTrend ? "СИЛЬНЫЙ" : "СЛАБЫЙ"
-            sacredPointLabel := label.new(sacredPointX, sacredPointY,
+            sacredPointLabel := label.new(int(sacredPointX), sacredPointY,
                                           "СТ\n" + strengthText + "\n" + str.tostring(trendStrength, "#.##"),
                                           color=color.new(sacredPointColor, 70),
                                           textcolor=color.white,
@@ -478,28 +478,28 @@ if showHexagram and not na(hexagramPointAX) and not na(hexagramPointBX) and not 
                                   color=hexagramColor, width=1, style=line.style_dotted)
 
         // 3-C
-        hexagramLine2 := line.new(p3_bar, p3_price, hexagramPointCX, hexagramPointCY,
+        hexagramLine2 := line.new(p3_bar, p3_price, int(hexagramPointCX), hexagramPointCY,
                                   color=hexagramColor, width=1, style=line.style_dotted)
 
         // 4-C
-        hexagramLine3 := line.new(p4_bar, p4_price, hexagramPointCX, hexagramPointCY,
+        hexagramLine3 := line.new(p4_bar, p4_price, int(hexagramPointCX), hexagramPointCY,
                                   color=hexagramColor, width=1, style=line.style_dotted)
 
         // СТ - середина 3-4 - C
         mid34X = (p3_bar + p4_bar) / 2
         mid34Y = (p3_price + p4_price) / 2
-        hexagramLine4 := line.new(sacredPointX, sacredPointY, hexagramPointCX, hexagramPointCY,
+        hexagramLine4 := line.new(int(sacredPointX), sacredPointY, int(hexagramPointCX), hexagramPointCY,
                                   color=hexagramColor, width=1, style=line.style_dotted)
 
         // Метки прогнозных точек A и B
         if showLabels
-            hexagramLabelA := label.new(hexagramPointAX, hexagramPointAY, "A (прогноз 5)",
+            hexagramLabelA := label.new(int(hexagramPointAX), hexagramPointAY, "A (прогноз 5)",
                                         color=color.new(color.blue, 70),
                                         textcolor=color.white,
                                         style=label.style_label_center,
                                         size=size.small)
 
-            hexagramLabelB := label.new(hexagramPointBX, hexagramPointBY, "B (прогноз 6)",
+            hexagramLabelB := label.new(int(hexagramPointBX), hexagramPointBY, "B (прогноз 6)",
                                         color=color.new(color.blue, 70),
                                         textcolor=color.white,
                                         style=label.style_label_center,
