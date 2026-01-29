@@ -2,7 +2,7 @@
 // © TRADERAGENT
 
 //@version=6
-indicator("Универсальный Индикатор v3 - Fibonacci Overlay", shorttitle="Universal Indicator v3 - Fib Overlay", overlay=true, max_lines_count=500, max_labels_count=500)
+indicator("Универсальный Индикатор v3 - Fibonacci Overlay", shorttitle="UI v3 Fib", overlay=true, max_lines_count=500, max_labels_count=500)
 
 // ============================================================================
 // ОПИСАНИЕ / DESCRIPTION
@@ -98,7 +98,7 @@ var label[] activeFibLabels = array.new<label>()
 
 // Store last signal information for table display
 // Хранение информации о последнем сигнале для отображения таблицы
-var bool lastSignalIsBullish = na
+var bool lastSignalIsBullish = false
 var float lastLowPrice = na
 var float lastHighPrice = na
 
