@@ -159,13 +159,16 @@ calcLogFibPrice(float lowPrice, float highPrice, float level, bool isBullish) =>
         logHigh = math.log(highPrice)
         logRange = logHigh - logLow
 
+        // Declare logPrice variable before using it
+        float logPrice = na
+
         // For bullish: standard Fib from low to high
         // For bearish: inverted Fib from high to low (FIX for v3)
         if isBullish
-            logPrice = logLow + (logRange * level)
+            logPrice := logLow + (logRange * level)
         else
             // ИСПРАВЛЕНИЕ: для медвежьих сигналов строим от high к low
-            logPrice = logHigh - (logRange * level)
+            logPrice := logHigh - (logRange * level)
 
         result := math.exp(logPrice)
     result

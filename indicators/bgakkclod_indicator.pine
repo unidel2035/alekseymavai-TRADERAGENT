@@ -286,9 +286,12 @@ calcLogFibPrice(float lowPrice, float highPrice, float level) =>
         logHigh = math.log(highPrice)
         logRange = logHigh - logLow
 
+        // Declare logPrice variable before using it
+        float logPrice = na
+
         // level 0.0 = High, level 1.0 = Low
         // Negative levels go above High (take profits)
-        logPrice = logHigh - (logRange * level)
+        logPrice := logHigh - (logRange * level)
         result := math.exp(logPrice)
     result
 
